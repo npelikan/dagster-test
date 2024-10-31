@@ -2,8 +2,6 @@ FROM python:3.11-slim
 
 ARG DAGSTER_VERSION=1.8.13
 
-COPY build_cache/ /
-
 RUN pip install \
     -e dagster \
     -e dagster-pipes \
