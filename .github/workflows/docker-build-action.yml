@@ -93,9 +93,9 @@ jobs:
         push: true
         pull: true
         tags: |
-            ghcr.io/snowdag:latest
-            ghcr.io/snowdag:${{ github.ref_name }}
-            ghcr.io/snowdag:${{ env.TAG }}
+            ghcr.io/npelikan/snowdag:latest
+            ghcr.io/npelikan/snowdag:${{ github.ref_name }}
+            ghcr.io/npelikan/snowdag:${{ env.TAG }}
         platforms: linux/amd64,linux/arm64
         cache-from: type=gha
         cache-to: type=gha,mode=max
