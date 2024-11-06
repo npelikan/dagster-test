@@ -28,6 +28,7 @@ dagster-celery-k8s==0.25.0
 dagster-graphql==1.9.0
 dagster-k8s==0.25.0
 dagster-pipes==1.9.0
+dagster-postgres==0.25.0
 dagster-webserver==1.9.0
 docstring-parser==0.16
 durationpy==0.9
@@ -74,6 +75,7 @@ prometheus-client==0.21.0
 prompt-toolkit==3.0.36
 propcache==0.2.0
 protobuf==4.25.5
+psycopg2-binary==2.9.10
 pyasn1==0.6.1
 pyasn1-modules==0.4.1
 pycparser==2.22
