@@ -65,12 +65,12 @@ def get_snotel_data(snotel_client, site_codes, sensor_codes, start_date, end_dat
     return df
 
 
-def build_snotel_station(code: str, name: str, s3: S3Resource) -> AssetsDefinition:
+def build_snotel_station(code: str, name: str) -> AssetsDefinition:
     @asset(
         partitions_def=DailyPartitionsDefinition(start_date="2023-10-01"),
         name=f"snotel_{code}",
     )
-    def _asset(context: AssetExecutionContext):
+    def _asset(context: AssetExecutionContext, s3: S3Resource):
         client = zeep.Client(
             "https://wcc.sc.egov.usda.gov/awdbWebService/services?WSDL"
         )

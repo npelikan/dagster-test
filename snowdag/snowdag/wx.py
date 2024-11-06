@@ -11,12 +11,12 @@ from dagster_aws.s3 import S3Resource
 import os
 
 
-def build_wx_station(code: str, name: str, s3: S3Resource) -> AssetsDefinition:
+def build_wx_station(code: str, name: str) -> AssetsDefinition:
     @asset(
         partitions_def=DailyPartitionsDefinition(start_date="2023-10-01"),
         name=f"wx_{code}",
     )
-    def _asset(context: AssetExecutionContext):
+    def _asset(context: AssetExecutionContext, s3: S3Resource):
         grab_date = datetime.datetime.strptime(context.partition_key, "%Y-%m-%d")
 
         params = {
