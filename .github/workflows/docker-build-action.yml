@@ -85,3 +85,17 @@ jobs:
         platforms: linux/amd64,linux/arm64
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: snowdag
+        push: true
+        pull: true
+        tags: |
+            ghcr.io/snowdag:latest
+            ghcr.io/snowdag:${{ github.ref_name }}
+            ghcr.io/snowdag:${{ env.TAG }}
+        platforms: linux/amd64,linux/arm64
+        cache-from: type=gha
+        cache-to: type=gha,mode=max

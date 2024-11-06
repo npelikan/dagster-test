@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+snowdag/__init__.py
+snowdag/assets.py
+snowdag/definitions.py
+snowdag.egg-info/PKG-INFO
+snowdag.egg-info/SOURCES.txt
+snowdag.egg-info/dependency_links.txt
+snowdag.egg-info/requires.txt
+snowdag.egg-info/top_level.txt
