@@ -66,9 +66,11 @@ def get_snotel_data(snotel_client, site_codes, sensor_codes, start_date, end_dat
 
 
 def build_snotel_station(code: str, name: str) -> AssetsDefinition:
+    friendly_name = code.replace(":", "_")
+
     @asset(
         partitions_def=DailyPartitionsDefinition(start_date="2023-10-01"),
-        name=f"snotel_{code.replace(":", "_")}",
+        name=f"snotel_{friendly_name}",
     )
     def _asset(context: AssetExecutionContext, s3: S3Resource):
         client = zeep.Client(
