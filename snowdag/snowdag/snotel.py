@@ -69,7 +69,7 @@ def build_snotel_station(code: str, name: str) -> AssetsDefinition:
     friendly_name = code.replace(":", "_")
 
     @asset(
-        partitions_def=DailyPartitionsDefinition(start_date="2023-10-01"),
+        partitions_def=DailyPartitionsDefinition(start_date="2024-11-01"),
         name=f"snotel_{friendly_name}",
     )
     def _asset(context: AssetExecutionContext, s3: S3Resource):

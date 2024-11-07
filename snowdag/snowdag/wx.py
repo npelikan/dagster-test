@@ -13,7 +13,7 @@ import os
 
 def build_wx_station(code: str, name: str) -> AssetsDefinition:
     @asset(
-        partitions_def=DailyPartitionsDefinition(start_date="2023-10-01"),
+        partitions_def=DailyPartitionsDefinition(start_date="2024-11-01"),
         name=f"wx_{code}",
     )
     def _asset(context: AssetExecutionContext, s3: S3Resource):
