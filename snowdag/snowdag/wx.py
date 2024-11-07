@@ -6,7 +6,7 @@ from dagster import (
     asset,
     AssetExecutionContext,
     DailyPartitionsDefinition,
-    ConfigurableResource
+    ConfigurableResource,
 )
 from dagster_aws.s3 import S3Resource
 import os
@@ -17,7 +17,9 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
         partitions_def=DailyPartitionsDefinition(start_date="2024-11-01"),
         name=f"wx_{code}",
     )
-    def _asset(context: AssetExecutionContext, s3: S3Resource, synoptic: ConfigurableResource):
+    def _asset(
+        context: AssetExecutionContext, s3: S3Resource, synoptic: ConfigurableResource
+    ):
         grab_date = datetime.datetime.strptime(context.partition_key, "%Y-%m-%d")
 
         params = {

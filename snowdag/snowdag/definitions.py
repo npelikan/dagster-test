@@ -4,7 +4,7 @@ from dagster import (
     build_schedule_from_partitioned_job,
     DefaultScheduleStatus,
     ConfigurableResource,
-    EnvVar
+    EnvVar,
 )
 from dagster_aws.s3 import S3Resource
 import os
@@ -38,6 +38,7 @@ wx_assets = [wx.build_wx_station(code, name) for code, name in wx_stations.items
 
 snotel_schedule = build_schedule_from_partitioned_job(
     define_asset_job("snotel_download", selection=snotel_assets),
+    execution_timezone="America/Denver", 
     default_status=DefaultScheduleStatus.RUNNING,
 )
 
@@ -45,6 +46,7 @@ wx_schedule = build_schedule_from_partitioned_job(
     define_asset_job("wx_station_download", selection=wx_assets),
     hour_of_day=1,
     minute_of_hour=30,
+    execution_timezone="America/Denver", 
     default_status=DefaultScheduleStatus.RUNNING,
 )
 
@@ -62,7 +64,7 @@ defs = Definitions(
             aws_access_key_id=EnvVar("AWS_ACCESS_KEY_ID"),
             aws_secret_access_key=EnvVar("AWS_SECRET_ACCESS_KEY"),
         ),
-        "synoptic": SynopticAPI(api_key=EnvVar("WX_API_KEY"))
+        "synoptic": SynopticAPI(api_key=EnvVar("WX_API_KEY")),
     },
     schedules=(snotel_schedule, wx_schedule),
 )
