@@ -38,7 +38,6 @@ wx_assets = [wx.build_wx_station(code, name) for code, name in wx_stations.items
 
 snotel_schedule = build_schedule_from_partitioned_job(
     define_asset_job("snotel_download", selection=snotel_assets),
-    execution_timezone="America/Denver", 
     default_status=DefaultScheduleStatus.RUNNING,
 )
 
@@ -46,7 +45,6 @@ wx_schedule = build_schedule_from_partitioned_job(
     define_asset_job("wx_station_download", selection=wx_assets),
     hour_of_day=1,
     minute_of_hour=30,
-    execution_timezone="America/Denver", 
     default_status=DefaultScheduleStatus.RUNNING,
 )
 
