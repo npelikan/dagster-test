@@ -48,7 +48,7 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
 
         s3_client.put_object(
             Bucket="snow-data",
-            Key=f"wx_data/{context.partition_key}.parquet",
+            Key=f"wx_data/{code}/{context.partition_key}.parquet",
             Body=parquet_data,
         )
 
