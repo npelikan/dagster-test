@@ -6,6 +6,7 @@ from dagster import (
     asset,
     AssetExecutionContext,
     DailyPartitionsDefinition,
+    ConfigurableResource
 )
 from dagster_aws.s3 import S3Resource
 import os
@@ -16,11 +17,11 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
         partitions_def=DailyPartitionsDefinition(start_date="2024-11-01"),
         name=f"wx_{code}",
     )
-    def _asset(context: AssetExecutionContext, s3: S3Resource):
+    def _asset(context: AssetExecutionContext, s3: S3Resource, synoptic: ConfigurableResource):
         grab_date = datetime.datetime.strptime(context.partition_key, "%Y-%m-%d")
 
         params = {
-            "token": os.getenv("WX_API_KEY"),  # access token
+            "token": synoptic.api_key,  # access token
             "stid": [code],  # mesonet station id
             "start": (grab_date - datetime.timedelta(days=1)).strftime("%Y%m%d0000"),
             "end": grab_date.strftime("%Y%m%d0000"),
