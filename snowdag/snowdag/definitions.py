@@ -31,7 +31,7 @@ defs = Definitions(
     resources={
         "s3": S3Resource(
             region_name="us-west-2",
-            endpoint_url="minio.minio.svc.cluster.local:9000",
+            endpoint_url="http://minio.minio.svc.cluster.local:9000",
             aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
             aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
         )
