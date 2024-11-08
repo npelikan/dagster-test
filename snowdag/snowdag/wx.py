@@ -9,7 +9,6 @@ from dagster import (
     ConfigurableResource,
 )
 from dagster_aws.s3 import S3Resource
-import os
 
 
 def build_wx_station(code: str, name: str) -> AssetsDefinition:
@@ -33,7 +32,11 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
             "https://api.synopticdata.com/v2/stations/timeseries", params=params
         )
         resp.raise_for_status()
-        i = resp.json()["STATION"][0]
+        try:
+            i = resp.json()["STATION"][0]
+        except Exception as e:
+            context.log.error(f"Received malformed JSON response: {resp.json()}")
+            raise e
 
         df = pd.DataFrame(i["OBSERVATIONS"])
         df["date_time"] = pd.to_datetime(df["date_time"]).dt.tz_convert(
