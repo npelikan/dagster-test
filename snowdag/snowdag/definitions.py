@@ -7,7 +7,6 @@ from dagster import (
     EnvVar,
 )
 from dagster_aws.s3 import S3Resource
-import os
 
 from . import snotel, wx  # noqa: TID252
 
@@ -17,6 +16,11 @@ snotel_sites = {
     "766:UT:SNTL": "Snowbird, UT",
     "1308:UT:SNTL": "Atwater Plot, UT",
     "814:UT:SNTL": "Thaynes Canyon, UT",
+    "572:UT:SNTL": "La Sal Mountain, UT",
+    "1304:UT:SNTL": "Gold Basin, UT",
+    "1269:UT:SNTL": "Mt Pennell, UT",
+    "396:UT:SNTL": "Chepeta Lake, UT",
+    "383:UT:SNTL": "Camp Jackson, UT",
 }
 wx_stations = {
     "C99": "Canyons - 9990",
@@ -28,6 +32,9 @@ wx_stations = {
     "AMB": "Alta - Baldy",
     "HP": "Hidden Peak",
     "CDYBK": "Canyons - Daybreak",
+    "LSL": "La Sal",
+    "GOLDB": "Gold Basin",
+    "NLPU1": "North Long Point (Abajos)",
 }
 
 snotel_assets = [
