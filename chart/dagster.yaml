@@ -1,0 +1,71 @@
+dagsterWebserver:
+  replicaCount: 1
+  image:
+    # When a tag is not supplied for a Dagster provided image,
+    # it will default as the Helm chart version.
+    repository: "ghcr.io/npelikan/dagster-test"
+    tag: v1.8.13
+    pullPolicy: Always
+
+dagster-user-deployments:
+  # Creates a workspace file with the gRPC servers hosting your user code.
+  enabled: true
+
+  # If you plan on deploying user code in a separate Helm release, set this to false.
+  enableSubchart: true
+
+  # Specify secrets to run user code server containers based on images in private registries. See:
+  # https://kubernetes.io/docs/concepts/containers/images/#referring-to-an-imagepullsecrets-on-a-pod
+  imagePullSecrets: []
+
+  # List of unique deployments
+  deployments:
+    - name: snowdag
+      image:
+        repository: ghcr.io/npelikan/snowdag
+        tag: "snowdag-0.0.2-beta.0"
+        pullPolicy: Always
+      dagsterApiGrpcArgs:
+        - "-m"
+        - "snowdag.definitions"
+      port: 3030
+      envSecrets:
+        - name: minio-bucket-creds
+        - name: wx-api-key
+      readinessProbe:
+        initialDelaySeconds: 120
+        failureThreshold: 25
+        timeoutSeconds: 60
+        periodSeconds: 60
+        successThreshold: 1
+
+
+
+celeryK8sRunLauncher:
+  image:
+    # When a tag is not supplied for a Dagster provided image,
+    # it will default as the Helm chart version.
+    repository: "ghcr.io/npelikan/dagster-test"
+    tag: v1.8.13
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+
+  dagsterWebserver:
+    # Ingress hostname for the webserver e.g. dagster.mycompany.com
+    # This variable allows customizing the route pattern in the ingress. Some
+    # ingress controllers may only support "/", whereas some may need "/*".
+    path: "/"
+    pathType: ImplementationSpecific
+    # NOTE: do NOT keep trailing slash. For root configuration, set as empty string
+    # See: https://github.com/dagster-io/dagster/issues/2073
+    host: "dagster.cube.local"
+
+
+dagsterDaemon:
+  image:
+    # When a tag is not supplied for a Dagster provided image,
+    # it will default as the Helm chart version.
+    repository: "ghcr.io/npelikan/dagster-test"
+    tag: v1.8.13

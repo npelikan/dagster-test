@@ -19,6 +19,27 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
     def _asset(
         context: AssetExecutionContext, s3: S3Resource, synoptic: ConfigurableResource
     ):
+        s3_prefix = f"wx_data/{code}/"
+        s3_filename = f"{s3_prefix}{context.partition_key}.parquet"
+        s3_client = s3.get_client()
+
+        _truncated = True
+        prefix_keys = []
+
+        while _truncated:
+            objects = s3_client.list_objects_v2(
+                Bucket="snow-data",
+                MaxKeys=1000,
+                Prefix=s3_prefix,
+                ContinuationToken=objects["NextContinuationToken"]
+            )
+            prefix_keys = prefix_keys + objects["Contents"]
+            _truncated = objects["IsTruncated"]
+
+        # Exit if key already exists.
+        if s3_filename in (x["Key"] for x in prefix_keys):
+            return None
+        
         grab_date = datetime.datetime.strptime(context.partition_key, "%Y-%m-%d")
 
         params = {
@@ -51,7 +72,7 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
 
         s3_client.put_object(
             Bucket="snow-data",
-            Key=f"wx_data/{code}/{context.partition_key}.parquet",
+            Key=s3_filename,
             Body=parquet_data,
         )
 

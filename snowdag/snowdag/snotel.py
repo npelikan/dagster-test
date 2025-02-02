@@ -75,6 +75,29 @@ def build_snotel_station(code: str, name: str) -> AssetsDefinition:
         name=f"snotel_{friendly_name}",
     )
     def _asset(context: AssetExecutionContext, s3: S3Resource):
+        s3_prefix = f"snotel_data/{friendly_name}/"
+        s3_filename = f"{s3_prefix}{context.partition_key}.parquet"
+        s3_client = s3.get_client()
+
+        _truncated = True
+        prefix_keys = []
+        continuation_token = None
+
+        while _truncated:
+            objects = s3_client.list_objects_v2(
+                Bucket="snow-data",
+                MaxKeys=1000,
+                Prefix=s3_prefix,
+                ContinuationToken=continuation_token
+            )
+            prefix_keys = prefix_keys + objects["Contents"]
+            _truncated = objects["IsTruncated"]
+            continuation_token = objects["NextContinuationToken"]
+
+        # Exit if key already exists.
+        if s3_filename in (x["Key"] for x in prefix_keys):
+            return None
+
         client = zeep.Client(
             "https://wcc.sc.egov.usda.gov/awdbWebService/services?WSDL"
         )
@@ -96,12 +119,12 @@ def build_snotel_station(code: str, name: str) -> AssetsDefinition:
 
         parquet_data = df.to_parquet(index=False)
 
-        s3_client = s3.get_client()
-
         s3_client.put_object(
             Bucket="snow-data",
-            Key=f"snotel_data/{friendly_name}/{context.partition_key}.parquet",
+            Key=s3_filename,
             Body=parquet_data,
         )
 
     return _asset
+
+

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: dagster-homelab
+description: A dagster deployment!
+type: application
+version: 0.1.0
+appVersion: 1.0.0
+dependencies:
+  - name: "dagster"
+    repository: "https://dagster-io.github.io/helm"
+    
