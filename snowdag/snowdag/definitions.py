@@ -78,7 +78,7 @@ defs = Definitions(
         "synoptic": SynopticAPI(api_key=EnvVar("WX_API_KEY")),
         "postgres": PostgreSQL(
             engine=sqlalchemy.create_engine(
-                f"postgresql+psycopg2://{EnvVar("POSTGRES_USER")}:{EnvVar("POSTGRES_PASS")}@{"POSTGRES_HOST"}/{"POSTGRES_DB"}"
+                f"postgresql+psycopg2://{EnvVar('POSTGRES_USER')}:{EnvVar('POSTGRES_PASS')}@{EnvVar('POSTGRES_HOST')}/{EnvVar('POSTGRES_DB')}"
             )
         ),
     },
