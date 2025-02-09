@@ -16,6 +16,7 @@ from dagster import (
     asset,
     sensor,
     define_asset_job,
+    ConfigurableResource,
 )
 from dagster_aws.s3 import S3Resource
 from dagster_aws.s3.sensor import get_s3_keys
@@ -89,8 +90,12 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
 
 
 @asset()
-def snow_postgres_write(context: AssetExecutionContext, config: ObjectConfig):
-    s3 = context.resources.s3
+def snow_postgres_write(
+    context: AssetExecutionContext,
+    config: ObjectConfig,
+    s3: S3Resource,
+    postgres: ConfigurableResource,
+):
     context.log.info(f"Reading {config.key}")
     table_name, station_id, _ = config.key.split("/")
     response = s3.get_object(Bucket=S3_BUCKET, Key=config.key)  # process object here
@@ -98,7 +103,6 @@ def snow_postgres_write(context: AssetExecutionContext, config: ObjectConfig):
 
     df = pd.read_parquet(io.BytesIO(parquet_content))
     df["station_id"] = station_id
-    postgres = context.resources.postgres
     engine = sqlalchemy.create_engine(
         f"postgresql+psycopg2://{postgres.user}:{postgres.password}@{postgres.host}/{postgres.db}"
     )
@@ -107,7 +111,7 @@ def snow_postgres_write(context: AssetExecutionContext, config: ObjectConfig):
 
 # Define asset job
 snow_postgres_write_job = define_asset_job(
-    "snow_postgres_write_job", selection=["snow_postgres_write"]
+    "snow_postgres_write_job", selection=[snow_postgres_write]
 )
 
 
