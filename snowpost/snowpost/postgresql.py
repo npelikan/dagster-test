@@ -90,7 +90,7 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
     return True
 
 
-@asset()
+@asset(op_tags={"dagster/concurrency_key": "database"})
 def snow_postgres_write(
     context: AssetExecutionContext,
     config: ObjectConfig,
