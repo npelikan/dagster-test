@@ -121,16 +121,19 @@ def snow_postgres_write(
 
 @sensor(
     target=snow_postgres_write,
-    minimum_interval_seconds=5,
+    minimum_interval_seconds=3600,
     default_status=DefaultSensorStatus.RUNNING,
 )
 def snow_postgres_sensor(context: SensorEvaluationContext, s3: S3Resource):
     latest_key = context.cursor or None
+    context.log.info(f"Evaluating before file {latest_key}")
     unprocessed_object_keys = get_s3_keys(
         bucket=S3_BUCKET, since_key=latest_key, s3_session=s3.get_client()
     )
+    context.log.debug(f"unprocessed_object_keys: {unprocessed_object_keys}")
 
     for key in unprocessed_object_keys:
+        context.log.info(f"Sending Run request for {key}")
         yield RunRequest(
             run_key=key,
             run_config=RunConfig(ops={"snow_postgres_write": ObjectConfig(key=key)}),
@@ -140,4 +143,5 @@ def snow_postgres_sensor(context: SensorEvaluationContext, s3: S3Resource):
         return SkipReason(f"No new s3 files found for bucket {S3_BUCKET}")
 
     last_key = unprocessed_object_keys[-1]
+    context.log.info(f"Setting cursor to {last_key}")
     context.update_cursor(last_key)
