@@ -42,13 +42,13 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
 
     # If the table does not exist, we should just use to_sql to create it
     with engine.connect() as connection:
-        if not connection.execute(
+        if not connection.execute(sqlalchemy.text(
             f"""SELECT EXISTS (
                 SELECT FROM information_schema.tables 
                 WHERE  table_schema = 'public'
                 AND    table_name   = '{table_name}');
                 """
-        ).first()[0]:
+        )).first()[0]:
             df.to_sql(table_name, engine)
             return True
 
@@ -68,9 +68,9 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
     update_column_stmt = ", ".join([f'"{col}" = EXCLUDED."{col}"' for col in columns])
 
     # For the ON CONFLICT clause, postgres requires that the columns have unique constraint
-    query_pk = f"""
+    query_pk = sqlalchemy.text(f"""
     ALTER TABLE "{table_name}" ADD CONSTRAINT {table_name}_unique_constraint_for_upsert UNIQUE ({index_sql_txt});
-    """
+    """)
     try:
         with engine.connect() as connection:
             connection.execute(query_pk)
@@ -81,15 +81,15 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
             raise e
 
     # Compose and execute upsert query
-    query_upsert = f"""
+    query_upsert = sqlalchemy.text(f"""
     INSERT INTO "{table_name}" ({headers_sql_txt}) 
     SELECT {headers_sql_txt} FROM "{temp_table_name}"
     ON CONFLICT ({index_sql_txt}) DO UPDATE 
     SET {update_column_stmt};
-    """
+    """)
     with engine.connect() as connection:
         connection.execute(query_upsert)
-        connection.execute(f'DROP TABLE "{temp_table_name}"')
+        connection.execute(text(f'DROP TABLE "{temp_table_name}"'))
         connection.commit()
 
     return True
