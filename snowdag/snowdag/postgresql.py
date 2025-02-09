@@ -98,8 +98,11 @@ def snow_postgres_write(context: AssetExecutionContext, config: ObjectConfig):
 
     df = pd.read_parquet(io.BytesIO(parquet_content))
     df["station_id"] = station_id
-
-    upsert_df(df, table_name=table_name, engine=context.resources.postgres.engine)
+    postgres = context.resources.postgres
+    engine = sqlalchemy.create_engine(
+        f"postgresql+psycopg2://{postgres.user}:{postgres.password}@{postgres.host}/{postgres.db}"
+    )
+    upsert_df(df, table_name=table_name, engine=engine)
 
 
 @sensor(target=snow_postgres_write)

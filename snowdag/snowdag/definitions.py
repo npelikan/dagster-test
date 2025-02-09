@@ -63,7 +63,10 @@ class SynopticAPI(ConfigurableResource):
 
 
 class PostgreSQL(ConfigurableResource):
-    engine: sqlalchemy.engine.Engine
+    user: str
+    password: str
+    host: str
+    db: str
 
 
 defs = Definitions(
@@ -77,11 +80,12 @@ defs = Definitions(
         ),
         "synoptic": SynopticAPI(api_key=EnvVar("WX_API_KEY")),
         "postgres": PostgreSQL(
-            engine=sqlalchemy.create_engine(
-                f"postgresql+psycopg2://{EnvVar('POSTGRES_USER')}:{EnvVar('POSTGRES_PASS')}@{EnvVar('POSTGRES_HOST')}/{EnvVar('POSTGRES_DB')}"
-            )
+            user=EnvVar("POSTGRES_USER"),
+            password=EnvVar("POSTGRES_PASS"),
+            host=EnvVar("POSTGRES_HOST"),
+            db=EnvVar("POSTGRES_DB"),
         ),
     },
     schedules=(snotel_schedule, wx_schedule),
-    sensors=[postgresql.snow_postgres_sensor]
+    sensors=[postgresql.snow_postgres_sensor],
 )
