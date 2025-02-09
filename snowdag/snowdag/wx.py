@@ -31,7 +31,7 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
                 Bucket="snow-data",
                 MaxKeys=1000,
                 Prefix=s3_prefix,
-                ContinuationToken=objects["NextContinuationToken"]
+                ContinuationToken=objects["NextContinuationToken"],
             )
             prefix_keys = prefix_keys + objects["Contents"]
             _truncated = objects["IsTruncated"]
@@ -39,7 +39,7 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
         # Exit if key already exists.
         if s3_filename in (x["Key"] for x in prefix_keys):
             return None
-        
+
         grab_date = datetime.datetime.strptime(context.partition_key, "%Y-%m-%d")
 
         params = {

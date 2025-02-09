@@ -27,7 +27,9 @@ example_job = example_graph.to_job(
     description="Example job. Use this to test your deployment.",
     config=config_from_files(
         [
-            file_relative_path(__file__, os.path.join("..", "run_config", "pipeline.yaml")),
+            file_relative_path(
+                __file__, os.path.join("..", "run_config", "pipeline.yaml")
+            ),
         ]
     ),
 )
@@ -46,7 +48,9 @@ pod_per_op_job = example_graph.to_job(
     config=config_from_files(
         [
             file_relative_path(__file__, os.path.join("..", "run_config", "k8s.yaml")),
-            file_relative_path(__file__, os.path.join("..", "run_config", "pipeline.yaml")),
+            file_relative_path(
+                __file__, os.path.join("..", "run_config", "pipeline.yaml")
+            ),
         ]
     ),
 )
@@ -66,8 +70,12 @@ pod_per_op_celery_job = example_graph.to_job(
     executor_def=celery_k8s_job_executor,
     config=config_from_files(
         [
-            file_relative_path(__file__, os.path.join("..", "run_config", "celery_k8s.yaml")),
-            file_relative_path(__file__, os.path.join("..", "run_config", "pipeline.yaml")),
+            file_relative_path(
+                __file__, os.path.join("..", "run_config", "celery_k8s.yaml")
+            ),
+            file_relative_path(
+                __file__, os.path.join("..", "run_config", "pipeline.yaml")
+            ),
         ]
     ),
 )

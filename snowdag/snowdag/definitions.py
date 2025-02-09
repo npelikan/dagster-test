@@ -8,7 +8,9 @@ from dagster import (
 )
 from dagster_aws.s3 import S3Resource
 
-from . import snotel, wx  # noqa: TID252
+from . import snotel, wx, postgresql  # noqa: TID252
+
+import sqlalchemy
 
 snotel_sites = {
     "366:UT:SNTL": "Brighton, UT",
@@ -60,8 +62,12 @@ class SynopticAPI(ConfigurableResource):
     api_key: str
 
 
+class PostgreSQL(ConfigurableResource):
+    engine: sqlalchemy.engine.Engine
+
+
 defs = Definitions(
-    assets=snotel_assets + wx_assets,
+    assets=snotel_assets + wx_assets + [postgresql.snow_postgres_write],
     resources={
         "s3": S3Resource(
             region_name="us-west-2",
@@ -70,6 +76,12 @@ defs = Definitions(
             aws_secret_access_key=EnvVar("AWS_SECRET_ACCESS_KEY"),
         ),
         "synoptic": SynopticAPI(api_key=EnvVar("WX_API_KEY")),
+        "postgres": PostgreSQL(
+            engine=sqlalchemy.create_engine(
+                f"postgresql+psycopg2://{EnvVar("POSTGRES_USERNAME")}:{EnvVar("POSTGRES_PASSWORD")}@{"POSTGRES_HOSTNAME"}/{"POSTGRES_DB"}"
+            )
+        ),
     },
     schedules=(snotel_schedule, wx_schedule),
+    sensors=[postgresql.snow_postgres_sensor]
 )

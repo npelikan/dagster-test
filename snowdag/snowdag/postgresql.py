@@ -4,7 +4,27 @@
 import pandas as pd
 import sqlalchemy
 import uuid
-import os
+import io
+
+from dagster import (
+    AssetExecutionContext,
+    Config,
+    Definitions,
+    EnvVar,
+    RunConfig,
+    RunRequest,
+    SkipReason,
+    asset,
+    sensor,
+)
+from dagster_aws.s3 import S3Resource
+from dagster_aws.s3.sensor import get_s3_keys
+
+from .config import S3_BUCKET
+
+
+class ObjectConfig(Config):
+    key: str
 
 
 def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engine):
@@ -67,3 +87,34 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
 
     return True
 
+
+@asset()
+def snow_postgres_write(context: AssetExecutionContext, config: ObjectConfig):
+    s3 = context.resources.s3
+    context.log.info(f"Reading {config.key}")
+    table_name, station_id, _ = config.key.split("/")
+    response = s3.get_object(Bucket=S3_BUCKET, Key=config.key)  # process object here
+    parquet_content = response["Body"].read()
+
+    df = pd.read_parquet(io.BytesIO(parquet_content))
+    df["station_id"] = station_id
+
+    upsert_df(df, table_name=table_name, engine=context.resources.postgres.engine)
+
+
+@sensor(target=snow_postgres_write)
+def snow_postgres_sensor(context):
+    latest_key = context.cursor or None
+    unprocessed_object_keys = get_s3_keys(bucket=S3_BUCKET, since_key=latest_key)
+
+    for key in unprocessed_object_keys:
+        yield RunRequest(
+            run_key=key,
+            run_config=RunConfig(ops={"snow_postgres_sensor": ObjectConfig(key=key)}),
+        )
+
+    if not unprocessed_object_keys:
+        return SkipReason(f"No new s3 files found for bucket {S3_BUCKET}")
+
+    last_key = unprocessed_object_keys[-1]
+    context.update_cursor(last_key)

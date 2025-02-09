@@ -88,7 +88,7 @@ def build_snotel_station(code: str, name: str) -> AssetsDefinition:
                 Bucket="snow-data",
                 MaxKeys=1000,
                 Prefix=s3_prefix,
-                ContinuationToken=continuation_token
+                ContinuationToken=continuation_token,
             )
             prefix_keys = prefix_keys + objects["Contents"]
             _truncated = objects["IsTruncated"]
@@ -126,5 +126,3 @@ def build_snotel_station(code: str, name: str) -> AssetsDefinition:
         )
 
     return _asset
-
-
