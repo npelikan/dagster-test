@@ -8,6 +8,7 @@ import io
 
 from dagster import (
     AssetExecutionContext,
+    SensorEvaluationContext,
     Config,
     DefaultSensorStatus,
     RunConfig,
@@ -96,6 +97,7 @@ def snow_postgres_write(
     s3: S3Resource,
     postgres: ConfigurableResource,
 ):
+    s3 = s3.get_client()
     context.log.info(f"Reading {config.key}")
     table_name, station_id, _ = config.key.split("/")
     response = s3.get_object(Bucket=S3_BUCKET, Key=config.key)  # process object here
@@ -120,9 +122,11 @@ snow_postgres_write_job = define_asset_job(
     minimum_interval_seconds=5,
     default_status=DefaultSensorStatus.RUNNING,
 )
-def snow_postgres_sensor(context):
+def snow_postgres_sensor(context: SensorEvaluationContext, s3: S3Resource):
     latest_key = context.cursor or None
-    unprocessed_object_keys = get_s3_keys(bucket=S3_BUCKET, since_key=latest_key)
+    unprocessed_object_keys = get_s3_keys(
+        bucket=S3_BUCKET, since_key=latest_key, s3_session=s3.get_client()
+    )
 
     for key in unprocessed_object_keys:
         yield RunRequest(
