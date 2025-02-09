@@ -98,7 +98,6 @@ def snow_postgres_write(
     postgres: ConfigurableResource,
 ):
     s3 = context.resources.s3
-    s3 = s3.get_client()
     context.log.info(f"Reading {config.key}")
     table_name, station_id, _ = config.key.split("/")
     response = s3.get_object(Bucket=S3_BUCKET, Key=config.key)  # process object here
