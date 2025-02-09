@@ -49,12 +49,12 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
                 AND    table_name   = '{table_name}');
                 """
         )).first()[0]:
-            df.to_sql(table_name, engine)
-            return True
+            df.to_sql(table_name, engine, index=False)
+            return "Table Created"
 
     # If it already exists...
     temp_table_name = f"temp_{uuid.uuid4().hex[:6]}"
-    df.to_sql(temp_table_name, engine, index=True)
+    df.to_sql(temp_table_name, engine, index=False)
 
     index = list(df.index.names)
     index_sql_txt = ", ".join([f'"{i}"' for i in index])
@@ -92,7 +92,7 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
         connection.execute(text(f'DROP TABLE "{temp_table_name}"'))
         connection.commit()
 
-    return True
+    return "Table Upserted"
 
 
 @asset(op_tags={"dagster/concurrency_key": "database"})
@@ -114,7 +114,9 @@ def snow_postgres_write(
     engine = sqlalchemy.create_engine(
         f"postgresql+psycopg2://{postgres.user}:{postgres.password}@{postgres.host}/{postgres.db}"
     )
-    upsert_df(df, table_name=table_name, engine=engine)
+    output = upsert_df(df, table_name=table_name, engine=engine)
+    context.log.info(output)
+    return True
 
 
 @sensor(
