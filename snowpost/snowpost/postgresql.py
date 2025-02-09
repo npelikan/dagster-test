@@ -104,6 +104,7 @@ def snow_postgres_write(
     response = s3.get_object(Bucket=S3_BUCKET, Key=config.key)  # process object here
     parquet_content = response["Body"].read()
 
+    postgres = context.resources.postgres
     df = pd.read_parquet(io.BytesIO(parquet_content))
     df["station_id"] = station_id
     engine = sqlalchemy.create_engine(
