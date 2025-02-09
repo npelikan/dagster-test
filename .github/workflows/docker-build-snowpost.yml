@@ -11,11 +11,6 @@ jobs:
         permissions:
           packages: write
           contents: read
-        strategy:
-          matrix:
-            arch:
-              - linux/amd64
-              - linux/arm64
         steps:
         - name: Checkout code
           uses: actions/checkout@v4
@@ -46,6 +41,6 @@ jobs:
                 ghcr.io/npelikan/snowpost:latest
                 ghcr.io/npelikan/snowpost:${{ github.ref_name }}
                 ghcr.io/npelikan/snowpost:${{ env.TAG }}
-            platforms: ${{ matrix.arch }}
+            platforms: linux/amd64,linux/arm64
             cache-from: type=gha
             cache-to: type=gha,mode=max
