@@ -9,13 +9,13 @@ import io
 from dagster import (
     AssetExecutionContext,
     Config,
-    Definitions,
-    EnvVar,
+    DefaultSensorStatus,
     RunConfig,
     RunRequest,
     SkipReason,
     asset,
     sensor,
+    define_asset_job,
 )
 from dagster_aws.s3 import S3Resource
 from dagster_aws.s3.sensor import get_s3_keys
@@ -105,7 +105,17 @@ def snow_postgres_write(context: AssetExecutionContext, config: ObjectConfig):
     upsert_df(df, table_name=table_name, engine=engine)
 
 
-@sensor(target=snow_postgres_write)
+# Define asset job
+snow_postgres_write_job = define_asset_job(
+    "snow_postgres_write_job", selection=["snow_postgres_write"]
+)
+
+
+@sensor(
+    job=snow_postgres_write_job,
+    minimum_interval_seconds=5,
+    default_status=DefaultSensorStatus.RUNNING,
+)
 def snow_postgres_sensor(context):
     latest_key = context.cursor or None
     unprocessed_object_keys = get_s3_keys(bucket=S3_BUCKET, since_key=latest_key)
