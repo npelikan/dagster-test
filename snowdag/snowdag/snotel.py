@@ -12,7 +12,7 @@ from dagster import (
 )
 import datetime
 from dagster_aws.s3 import S3Resource
-
+from .config import S3_BUCKET
 
 def filter_valdict(d):
     return {k: v for k, v in d.items() if k in ("dateTime", "value")}
@@ -85,7 +85,7 @@ def build_snotel_station(code: str, name: str) -> AssetsDefinition:
 
         while _truncated:
             objects = s3_client.list_objects_v2(
-                Bucket="snow-data",
+                Bucket=S3_BUCKET,
                 MaxKeys=1000,
                 Prefix=s3_prefix,
                 ContinuationToken=continuation_token,

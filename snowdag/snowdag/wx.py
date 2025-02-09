@@ -9,7 +9,7 @@ from dagster import (
     ConfigurableResource,
 )
 from dagster_aws.s3 import S3Resource
-
+from .config import S3_BUCKET
 
 def build_wx_station(code: str, name: str) -> AssetsDefinition:
     @asset(
@@ -71,7 +71,7 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
         s3_client = s3.get_client()
 
         s3_client.put_object(
-            Bucket="snow-data",
+            Bucket=S3,
             Key=s3_filename,
             Body=parquet_data,
         )
