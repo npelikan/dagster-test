@@ -41,15 +41,16 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
     """
 
     # If the table does not exist, we should just use to_sql to create it
-    if not engine.execute(
-        f"""SELECT EXISTS (
-            SELECT FROM information_schema.tables 
-            WHERE  table_schema = 'public'
-            AND    table_name   = '{table_name}');
-            """
-    ).first()[0]:
-        df.to_sql(table_name, engine)
-        return True
+    with engine.connect() as connection:
+        if not connection.execute(
+            f"""SELECT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE  table_schema = 'public'
+                AND    table_name   = '{table_name}');
+                """
+        ).first()[0]:
+            df.to_sql(table_name, engine)
+            return True
 
     # If it already exists...
     temp_table_name = f"temp_{uuid.uuid4().hex[:6]}"
@@ -71,7 +72,9 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
     ALTER TABLE "{table_name}" ADD CONSTRAINT {table_name}_unique_constraint_for_upsert UNIQUE ({index_sql_txt});
     """
     try:
-        engine.execute(query_pk)
+        with engine.connect() as connection:
+            connection.execute(query_pk)
+            connection.commit()
     except Exception as e:
         # relation "unique_constraint_for_upsert" already exists
         if not 'unique_constraint_for_upsert" already exists' in e.args[0]:
@@ -84,8 +87,10 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
     ON CONFLICT ({index_sql_txt}) DO UPDATE 
     SET {update_column_stmt};
     """
-    engine.execute(query_upsert)
-    engine.execute(f'DROP TABLE "{temp_table_name}"')
+    with engine.connect() as connection:
+        connection.execute(query_upsert)
+        connection.execute(f'DROP TABLE "{temp_table_name}"')
+        connection.commit()
 
     return True
 
