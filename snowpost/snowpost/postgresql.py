@@ -49,12 +49,12 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
                 AND    table_name   = '{table_name}');
                 """
         )).first()[0]:
-            df.to_sql(table_name, engine, index=False)
+            df.to_sql(table_name, engine, index=True)
             return "Table Created"
 
     # If it already exists...
     temp_table_name = f"temp_{uuid.uuid4().hex[:6]}"
-    df.to_sql(temp_table_name, engine, index=False)
+    df.to_sql(temp_table_name, engine, index=True)
 
     index = list(df.index.names)
     index_sql_txt = ", ".join([f'"{i}"' for i in index])
@@ -110,7 +110,14 @@ def snow_postgres_write(
 
     postgres = context.resources.postgres
     df = pd.read_parquet(io.BytesIO(parquet_content))
-    df["station_id"] = station_id
+
+    if table_name == "snotel_data":
+        df = df.set_index(["siteCode", "dateTime"])
+    elif table_name == "wx_data":
+        df = df.set_index(["station", "date_time"])
+    else:
+        raise Exception("Unknown Table Name!")
+
     engine = sqlalchemy.create_engine(
         f"postgresql+psycopg2://{postgres.user}:{postgres.password}@{postgres.host}/{postgres.db}"
     )
