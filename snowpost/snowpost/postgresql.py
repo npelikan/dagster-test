@@ -97,6 +97,7 @@ def snow_postgres_write(
     s3: S3Resource,
     postgres: ConfigurableResource,
 ):
+    s3 = context.resources.s3
     s3 = s3.get_client()
     context.log.info(f"Reading {config.key}")
     table_name, station_id, _ = config.key.split("/")
@@ -111,14 +112,8 @@ def snow_postgres_write(
     upsert_df(df, table_name=table_name, engine=engine)
 
 
-# Define asset job
-snow_postgres_write_job = define_asset_job(
-    "snow_postgres_write_job", selection=[snow_postgres_write]
-)
-
-
 @sensor(
-    job=snow_postgres_write_job,
+    target=snow_postgres_write,
     minimum_interval_seconds=5,
     default_status=DefaultSensorStatus.RUNNING,
 )
@@ -131,7 +126,7 @@ def snow_postgres_sensor(context: SensorEvaluationContext, s3: S3Resource):
     for key in unprocessed_object_keys:
         yield RunRequest(
             run_key=key,
-            run_config=RunConfig(ops={"snow_postgres_sensor": ObjectConfig(key=key)}),
+            run_config=RunConfig(ops={"snow_postgres_write": ObjectConfig(key=key)}),
         )
 
     if not unprocessed_object_keys:
