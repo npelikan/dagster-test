@@ -1,7 +1,4 @@
-from botocore import S3
-
-
-def get_s3_objects(s3_client: S3.Client, s3_bucket: str, s3_prefix: str) -> list[str]:
+def get_s3_objects(s3_client, s3_bucket: str, s3_prefix: str) -> list[str]:
     _truncated = True
     keys = []
     continuation_token = ""
