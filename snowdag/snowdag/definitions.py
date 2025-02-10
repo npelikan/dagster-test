@@ -8,7 +8,7 @@ from dagster import (
 )
 from dagster_aws.s3 import S3Resource
 
-from . import snotel, wx # noqa: TID252
+from . import snotel, wx  # noqa: TID252
 
 import sqlalchemy
 

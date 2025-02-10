@@ -10,6 +10,8 @@ from dagster import (
 )
 from dagster_aws.s3 import S3Resource
 from .config import S3_BUCKET
+from .utils import get_s3_objects
+
 
 def build_wx_station(code: str, name: str) -> AssetsDefinition:
     @asset(
@@ -23,18 +25,9 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
         s3_filename = f"{s3_prefix}{context.partition_key}.parquet"
         s3_client = s3.get_client()
 
-        _truncated = True
-        prefix_keys = []
-
-        while _truncated:
-            objects = s3_client.list_objects_v2(
-                Bucket="snow-data",
-                MaxKeys=1000,
-                Prefix=s3_prefix,
-                ContinuationToken=objects["NextContinuationToken"],
-            )
-            prefix_keys = prefix_keys + objects["Contents"]
-            _truncated = objects["IsTruncated"]
+        prefix_keys = get_s3_objects(
+            s3_client=s3_client, s3_bucket=S3_BUCKET, s3_prefix=s3_prefix
+        )
 
         # Exit if key already exists.
         if s3_filename in (x["Key"] for x in prefix_keys):
@@ -71,7 +64,7 @@ def build_wx_station(code: str, name: str) -> AssetsDefinition:
         s3_client = s3.get_client()
 
         s3_client.put_object(
-            Bucket=S3,
+            Bucket=S3_BUCKET,
             Key=s3_filename,
             Body=parquet_data,
         )
