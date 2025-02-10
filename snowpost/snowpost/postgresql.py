@@ -53,7 +53,14 @@ def upsert_df(df: pd.DataFrame, table_name: str, engine: sqlalchemy.engine.Engin
             return "Table Created"
 
     # If it already exists...
+    # get column names
+    with engine.connect() as connection:
+        res = connection.execute(sqlalchemy.text("SELECT * FROM wx_data LIMIT 1;"))
+    
+    existing_cols = list(res.keys())
+
     temp_table_name = f"temp_{uuid.uuid4().hex[:6]}"
+    df = df[[x for x in df.columns if x in existing_cols]]
     df.to_sql(temp_table_name, engine, index=True)
 
     index = list(df.index.names)
