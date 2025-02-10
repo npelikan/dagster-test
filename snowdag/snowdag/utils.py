@@ -9,7 +9,10 @@ def get_s3_objects(s3_client, s3_bucket: str, s3_prefix: str) -> list[str]:
     )
     keys = keys + objects["Contents"]
     _truncated = objects["IsTruncated"]
-    continuation_token = objects["NextContinuationToken"]
+    if _truncated:
+        continuation_token = objects["NextContinuationToken"]
+    else:
+        continuation_token = ""
 
     while _truncated:
         objects = s3_client.list_objects_v2(
@@ -20,6 +23,9 @@ def get_s3_objects(s3_client, s3_bucket: str, s3_prefix: str) -> list[str]:
         )
         keys = keys + objects["Contents"]
         _truncated = objects["IsTruncated"]
-        continuation_token = objects["NextContinuationToken"]
+        if _truncated:
+            continuation_token = objects["NextContinuationToken"]
+        else:
+            continuation_token = ""
 
     return keys
