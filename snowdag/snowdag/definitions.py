@@ -32,7 +32,7 @@ wx_stations = {
     "IFF": "Cardiff Peak",
     "PC064": "Albion Basin",
     "AMB": "Alta - Baldy",
-    "HP": "Hidden Peak",
+    # "HP": "Hidden Peak",
     "CDYBK": "Canyons - Daybreak",
     "LSL": "La Sal",
     "GOLDB": "Gold Basin",
