@@ -8,9 +8,8 @@ from dagster import (
 )
 from dagster_aws.s3 import S3Resource
 
-from . import snotel, wx  # noqa: TID252
-
-import sqlalchemy
+from . import minio  # noqa: TID252
+from . import postgres
 
 snotel_sites = {
     "366:UT:SNTL": "Brighton, UT",
@@ -39,11 +38,23 @@ wx_stations = {
     "NLPU1": "North Long Point (Abajos)",
 }
 
+def create_snotel_assets(code, name):
+    minio_asset = minio.build_snotel_station(code, name)
+    postgres_asset = postgres.snotel_to_postgres(code, minio_asset)
+    return minio_asset, postgres_asset
+
 snotel_assets = [
-    snotel.build_snotel_station(code, name) for code, name in snotel_sites.items()
+    x for code, name in snotel_sites.items() for x in create_snotel_assets(code, name)
 ]
 
-wx_assets = [wx.build_wx_station(code, name) for code, name in wx_stations.items()]
+def create_wx_assets(code, name):
+    minio_asset = minio.build_wx_station(code, name)
+    postgres_asset = postgres.wx_to_postgres(code, minio_asset)
+    return minio_asset, postgres_asset
+
+wx_assets = [
+    x for code, name in wx_stations.items() for x in create_wx_assets(code, name)
+]
 
 snotel_schedule = build_schedule_from_partitioned_job(
     define_asset_job("snotel_download", selection=snotel_assets),
@@ -66,6 +77,7 @@ class PostgreSQL(ConfigurableResource):
     user: str
     password: str
     host: str
+    port: str
     db: str
 
 
@@ -79,6 +91,13 @@ defs = Definitions(
             aws_secret_access_key=EnvVar("AWS_SECRET_ACCESS_KEY"),
         ),
         "synoptic": SynopticAPI(api_key=EnvVar("WX_API_KEY")),
+        "postgres": PostgreSQL(
+            user=EnvVar("POSTGRES_USER"),
+            password=EnvVar("POSTGRES_PASS"),
+            host="datawarehouse-postgresql.datawarehouse.svc.cluster.local",
+            port="5432",
+            db="snow_data"
+        )
     },
     schedules=(snotel_schedule, wx_schedule),
 )

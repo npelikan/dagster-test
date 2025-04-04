@@ -9,8 +9,8 @@ from dagster import (
     ConfigurableResource,
 )
 from dagster_aws.s3 import S3Resource
-from .config import S3_BUCKET
-from .utils import get_s3_objects
+from ..config import S3_BUCKET
+from ..utils import get_s3_objects
 
 
 def build_wx_station(code: str, name: str) -> AssetsDefinition:

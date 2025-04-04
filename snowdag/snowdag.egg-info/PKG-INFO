@@ -1,11 +1,14 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.4
 Name: snowdag
 Version: 0.1.0
 Summary: Add your description here
 Requires-Python: <3.13,>=3.8
 Description-Content-Type: text/markdown
 Requires-Dist: dagster
+Requires-Dist: dagster-aws>=0.24.13
 Requires-Dist: dagster-cloud
+Requires-Dist: psycopg2-binary>=2.9.10
+Requires-Dist: psycopg[binary]>=3.2.6
 Provides-Extra: dev
 Requires-Dist: dagster-webserver; extra == "dev"
 Requires-Dist: pytest; extra == "dev"

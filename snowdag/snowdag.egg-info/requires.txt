@@ -1,5 +1,8 @@
 dagster
+dagster-aws>=0.24.13
 dagster-cloud
+psycopg2-binary>=2.9.10
+psycopg[binary]>=3.2.6
 
 [dev]
 dagster-webserver
