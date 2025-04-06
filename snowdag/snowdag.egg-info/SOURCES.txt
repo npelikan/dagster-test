@@ -16,3 +16,4 @@ snowdag/minio/snotel.py
 snowdag/minio/wx.py
 snowdag/postgres/__init__.py
 snowdag/postgres/snotel.py
+snowdag/postgres/wx.py

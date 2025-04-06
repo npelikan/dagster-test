@@ -6,6 +6,8 @@ annotated-types==0.7.0
     # via pydantic
 antlr4-python3-runtime==4.13.2
     # via dagster
+attrs==25.3.0
+    # via zeep
 boto3==1.37.26
     # via dagster-aws
 botocore==1.37.26
@@ -76,6 +78,8 @@ idna==3.10
     # via requests
 importlib-metadata==8.6.1
     # via opentelemetry-api
+isodate==0.7.2
+    # via zeep
 jinja2==3.1.6
     # via
     #   dagster
@@ -84,6 +88,8 @@ jmespath==1.0.1
     # via
     #   boto3
     #   botocore
+lxml==5.3.2
+    # via zeep
 mako==1.3.9
     # via alembic
 markdown-it-py==3.0.0
@@ -94,6 +100,8 @@ markupsafe==3.0.2
     #   mako
 mdurl==0.1.2
     # via markdown-it-py
+numpy==2.2.4
+    # via pandas
 opentelemetry-api==1.31.1
     # via
     #   dagster-cloud
@@ -126,8 +134,12 @@ packaging==24.2
     #   dagster-aws
     #   dagster-cloud-cli
     #   dagster-shared
+pandas==2.2.3
+    # via snowdag (pyproject.toml)
 pex==2.33.7
     # via dagster-cloud
+platformdirs==4.3.7
+    # via zeep
 prompt-toolkit==3.0.50
     # via questionary
 protobuf==5.29.4
@@ -156,10 +168,14 @@ python-dateutil==2.9.0.post0
     # via
     #   botocore
     #   github3-py
+    #   pandas
 python-dotenv==1.1.0
     # via dagster
 pytz==2025.2
-    # via dagster
+    # via
+    #   dagster
+    #   pandas
+    #   zeep
 pyyaml==6.0.2
     # via
     #   dagster-cloud-cli
@@ -176,6 +192,13 @@ requests==2.32.3
     #   dagster-cloud-cli
     #   github3-py
     #   opentelemetry-exporter-otlp-proto-http
+    #   requests-file
+    #   requests-toolbelt
+    #   zeep
+requests-file==2.1.0
+    # via zeep
+requests-toolbelt==1.0.0
+    # via zeep
 rich==14.0.0
     # via
     #   dagster
@@ -221,6 +244,8 @@ typing-extensions==4.13.0
     #   typing-inspection
 typing-inspection==0.4.0
     # via pydantic
+tzdata==2025.2
+    # via pandas
 universal-pathlib==0.2.6
     # via dagster
 uritemplate==4.1.1
@@ -235,5 +260,7 @@ wcwidth==0.2.13
     # via prompt-toolkit
 wrapt==1.17.2
     # via deprecated
+zeep==4.3.1
+    # via snowdag (pyproject.toml)
 zipp==3.21.0
     # via importlib-metadata
