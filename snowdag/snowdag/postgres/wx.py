@@ -18,7 +18,7 @@ def wx_to_postgres(code: str, dep: AssetsDefinition) -> AssetsDefinition:
     
     @asset(
         partitions_def=DailyPartitionsDefinition(
-            start_date="2024-11-01", timezone="America/Denver"
+            start_date="2024-11-01"
         ),
         name=f"wx_{code}-postgres",
         deps=[dep],
