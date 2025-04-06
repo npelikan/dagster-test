@@ -33,6 +33,7 @@ dagster==1.10.7
     #   snowdag (pyproject.toml)
     #   dagster-aws
     #   dagster-cloud
+    #   dagster-postgres
 dagster-aws==0.26.7
     # via snowdag (pyproject.toml)
 dagster-cloud==1.10.7
@@ -41,6 +42,8 @@ dagster-cloud-cli==1.10.7
     # via dagster-cloud
 dagster-pipes==1.10.7
     # via dagster
+dagster-postgres==0.26.7
+    # via snowdag (pyproject.toml)
 dagster-shared==0.26.7
     # via
     #   dagster
@@ -153,7 +156,9 @@ psycopg==3.2.6
 psycopg-binary==3.2.6
     # via psycopg
 psycopg2-binary==2.9.10
-    # via snowdag (pyproject.toml)
+    # via
+    #   snowdag (pyproject.toml)
+    #   dagster-postgres
 pycparser==2.22
     # via cffi
 pydantic==2.11.1

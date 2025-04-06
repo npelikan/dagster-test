@@ -7,6 +7,7 @@ Description-Content-Type: text/markdown
 Requires-Dist: dagster
 Requires-Dist: dagster-aws>=0.24.13
 Requires-Dist: dagster-cloud
+Requires-Dist: dagster-postgres>=0.24.13
 Requires-Dist: pandas>=2.0.3
 Requires-Dist: psycopg2-binary>=2.9.10
 Requires-Dist: psycopg[binary]>=3.2.6

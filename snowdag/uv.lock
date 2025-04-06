@@ -741,6 +741,41 @@ wheels = [
 ]
 
 [[package]]
+name = "dagster-postgres"
+version = "0.24.13"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.9'",
+]
+dependencies = [
+    { name = "dagster", version = "1.8.13", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "psycopg2-binary", marker = "python_full_version < '3.9'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6c/45/a8d6aed7d9cff71847604ecc7ef3dd5900aec74a881e7175de9ac22f1ca2/dagster-postgres-0.24.13.tar.gz", hash = "sha256:d2389a1ddd3ebcab5ad32e5dd1167cebf9152f7b876f1972c7b7529d531c105a", size = 15340 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ef/fe/eafc4265ed2b7761dd5bfbb879b0711ce2796c43085f0e3ad3c146716b0a/dagster_postgres-0.24.13-py3-none-any.whl", hash = "sha256:40aa83935180b2a3eb9967c36c88a3b0b5fb6147275b8d592c235aa68a2cad83", size = 21329 },
+]
+
+[[package]]
+name = "dagster-postgres"
+version = "0.26.7"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
+    "python_full_version == '3.10.*'",
+    "python_full_version == '3.9.*'",
+]
+dependencies = [
+    { name = "dagster", version = "1.10.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
+    { name = "psycopg2-binary", marker = "python_full_version >= '3.9'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/11/aa/50d584a955c98f0e9f9eecc3db20d6b30bb1bfb78f995233627426395560/dagster-postgres-0.26.7.tar.gz", hash = "sha256:9f6d519c22310624a675844bcd32ec1045339c3059584a7fee65d8c7e0822b5e", size = 15404 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ac/86/de4e52461603707113994f55f58b7f4828336184b0e6d62009a60845d87d/dagster_postgres-0.26.7-py3-none-any.whl", hash = "sha256:768cc44e8fd234c1aeda70a6466d8699f28cbef4b2b0621b5737d2f7b138d5ba", size = 21522 },
+]
+
+[[package]]
 name = "dagster-shared"
 version = "0.26.7"
 source = { registry = "https://pypi.org/simple" }
@@ -3129,6 +3164,8 @@ dependencies = [
     { name = "dagster-aws", version = "0.26.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
     { name = "dagster-cloud", version = "1.8.13", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "dagster-cloud", version = "1.10.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
+    { name = "dagster-postgres", version = "0.24.13", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "dagster-postgres", version = "0.26.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
     { name = "pandas", version = "2.0.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "pandas", version = "2.2.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
     { name = "psycopg", extra = ["binary"] },
@@ -3148,6 +3185,7 @@ requires-dist = [
     { name = "dagster" },
     { name = "dagster-aws", specifier = ">=0.24.13" },
     { name = "dagster-cloud" },
+    { name = "dagster-postgres", specifier = ">=0.24.13" },
     { name = "dagster-webserver", marker = "extra == 'dev'" },
     { name = "pandas", specifier = ">=2.0.3" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.6" },
