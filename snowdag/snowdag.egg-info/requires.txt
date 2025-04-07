@@ -5,6 +5,7 @@ dagster-postgres>=0.24.13
 pandas>=2.0.3
 psycopg2-binary>=2.9.10
 psycopg[binary]>=3.2.6
+pyarrow>=17.0.0
 zeep>=4.3.1
 
 [dev]

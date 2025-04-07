@@ -159,6 +159,8 @@ psycopg2-binary==2.9.10
     # via
     #   snowdag (pyproject.toml)
     #   dagster-postgres
+pyarrow==19.0.1
+    # via snowdag (pyproject.toml)
 pycparser==2.22
     # via cffi
 pydantic==2.11.1

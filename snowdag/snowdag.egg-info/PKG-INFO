@@ -11,6 +11,7 @@ Requires-Dist: dagster-postgres>=0.24.13
 Requires-Dist: pandas>=2.0.3
 Requires-Dist: psycopg2-binary>=2.9.10
 Requires-Dist: psycopg[binary]>=3.2.6
+Requires-Dist: pyarrow>=17.0.0
 Requires-Dist: zeep>=4.3.1
 Provides-Extra: dev
 Requires-Dist: dagster-webserver; extra == "dev"
