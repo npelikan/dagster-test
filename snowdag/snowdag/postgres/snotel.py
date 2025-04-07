@@ -64,7 +64,6 @@ def snotel_to_postgres(code: str, dep: AssetsDefinition) -> AssetsDefinition:
         conn = psycopg.connect(conn_string)
 
         with conn.cursor() as cur:
-            cur.execute(f"ALTER TABLE {temp_table_name} SET TEMPORARY")
 
             cur.execute(
                 f"""
@@ -72,6 +71,11 @@ def snotel_to_postgres(code: str, dep: AssetsDefinition) -> AssetsDefinition:
                 ON CONFLICT DO NOTHING;
                 """
             )
+
+            conn.commit()
+
+            cur.execute(f"DROP TABLE {temp_table_name};")
+
             conn.commit()
 
         conn.close()

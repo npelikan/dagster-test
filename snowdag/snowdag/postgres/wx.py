@@ -71,6 +71,10 @@ def wx_to_postgres(code: str, dep: AssetsDefinition) -> AssetsDefinition:
             )
             conn.commit()
 
+            cur.execute(f"DROP TABLE {temp_table_name};")
+
+            conn.commit()
+
         conn.close()
 
     return _asset
