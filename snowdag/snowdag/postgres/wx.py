@@ -30,7 +30,7 @@ def wx_to_postgres(code: str, dep: AssetsDefinition) -> AssetsDefinition:
         s3_client = s3.get_client()
 
         obj = s3_client.get_object(Bucket=S3_BUCKET, Key=s3_filename)
-        sdf = pd.read_parquet(io.BytesIO(obj['Body'].read()))
+        wdf = pd.read_parquet(io.BytesIO(obj['Body'].read()))
 
         ## munge file to postgres format
         # rename and select columns
