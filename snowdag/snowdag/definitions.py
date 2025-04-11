@@ -36,7 +36,12 @@ wx_stations = {
     "LSL": "La Sal",
     "GOLDB": "Gold Basin",
     "NLPU1": "North Long Point (Abajos)",
+    "SOLHP": "Solitude - Honeycomb Peak",
+    "SOLSM": "Solitude - Summit",
+    "BRC": "Brighton - Crest",
+    
 }
+
 
 def create_snotel_assets(code, name):
     minio_asset = minio.build_snotel_station(code, name)

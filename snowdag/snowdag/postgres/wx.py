@@ -1,5 +1,6 @@
 import psycopg
 import pandas as pd
+import numpy as np
 import io
 import uuid
 
@@ -43,6 +44,11 @@ def wx_to_postgres(code: str, dep: AssetsDefinition) -> AssetsDefinition:
             "wind_direction_set_1": "wind_direction",
             "wind_gust_set_1": "wind_gust"
         }
+
+        # if a column is missing, add it
+        for k in rename_dict.keys():
+            if k not in wdf.columns:
+                wdf[k] = np.nan
 
         wdf = wdf[list(rename_dict.keys())].rename(columns=rename_dict)
         wdf
