@@ -7,7 +7,13 @@ def get_s3_objects(s3_client, s3_bucket: str, s3_prefix: str) -> list[str]:
         MaxKeys=1000,
         Prefix=s3_prefix,
     )
-    keys = keys + objects["Contents"]
+
+    try:
+        keys = keys + objects["Contents"]
+    # exit if no "Contents" key (sigh I hate u boto)
+    except KeyError:
+        return keys
+    
     _truncated = objects["IsTruncated"]
     if _truncated:
         continuation_token = objects["NextContinuationToken"]
